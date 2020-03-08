@@ -4,6 +4,10 @@ config :trackr,
   ecto_repos: [Trackr.Repo],
   generators: [binary_id: true]
 
+config :trackr, TrackrWeb.Guardian,
+  issuer: "crucible",
+  secret_key: "sVZ9vC+SkKWIpS+zJ2JPPI8Slu2Gq7NKbvznrjEBKn6nFtVnJjecrT4BGqcfLHwY"
+
 config :trackr, TrackrWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MGOaVzqWL5S5XYFDzDn7KQw4hYa9r/0H0v/vE3fCU3wHLJQN/X6rvAhXiXlALPha",

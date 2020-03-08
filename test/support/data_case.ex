@@ -25,7 +25,7 @@ defmodule Trackr.DataCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import Trackr.DataCase
+      import Trackr.{DataCase, Factory}
     end
   end
 
