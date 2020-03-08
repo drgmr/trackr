@@ -6,6 +6,8 @@ defmodule TrackrWeb.Context do
 
   @behaviour Plug
 
+  alias TrackrWeb.Guardian
+
   import Plug.Conn
 
   def init(opts), do: opts
@@ -16,12 +18,11 @@ defmodule TrackrWeb.Context do
     put_private(conn, :absinthe, %{context: context})
   end
 
-  # TODO: Actually authorize users
   defp build_context(conn) do
-    case get_req_header(conn, "authorization") do
-      ["Bearer " <> token] ->
-        %{current_token: token}
-
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
+         {:ok, claims} <- Guardian.decode_and_verify(token) do
+      %{claims: claims}
+    else
       _ ->
         %{}
     end
