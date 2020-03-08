@@ -6,7 +6,7 @@ defmodule Trackr.Accounts do
 
   alias Trackr.Accounts.User
 
-  @spec get_user(Ecto.UUID.t()) :: {:ok, term()} | {:error, :not_found}
+  @spec get_user(Ecto.UUID.t()) :: {:ok, User.t()} | {:error, :not_found}
   def get_user(id) do
     case Repo.get(User, id) do
       nil ->
