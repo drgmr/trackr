@@ -26,6 +26,8 @@ defmodule Trackr.MixProject do
 
   defp deps do
     [
+      {:absinthe, "~> 1.4"},
+      {:absinthe_plug, "~> 1.4"},
       {:credo, "~> 1.2", only: [:dev, :test], runtime: false},
       {:phoenix, "~> 1.4.15"},
       {:phoenix_pubsub, "~> 1.1"},
