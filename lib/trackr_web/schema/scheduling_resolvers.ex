@@ -62,4 +62,14 @@ defmodule TrackrWeb.Schema.SchedulingResolvers do
 
     Trackr.create_day_registry(params)
   end
+
+  def update_day_registry(_parent, args, %{context: %{claims: claims}}) do
+    {day_registry_id, params} = Map.pop!(args, :id)
+
+    Trackr.update_day_registry(claims["sub"], day_registry_id, params)
+  end
+
+  def delete_day_registry(_parent, %{id: day_registry_id}, %{context: %{claims: claims}}) do
+    Trackr.delete_day_registry(claims["sub"], day_registry_id)
+  end
 end

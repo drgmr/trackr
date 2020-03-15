@@ -96,6 +96,25 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
 
       resolve(&SchedulingResolvers.create_day_registry/3)
     end
+
+    @desc "Updates a day registry"
+    field :update_day_registry, type: :day_registry do
+      arg(:id, non_null(:id))
+      arg(:start_time, :time)
+      arg(:end_time, :time)
+      arg(:notes, :string)
+      arg(:block_id, :id)
+      arg(:past_day_id, :id)
+
+      resolve(&SchedulingResolvers.update_day_registry/3)
+    end
+
+    @desc "Deletes a day registry"
+    field :delete_day_registry, type: :day_registry do
+      arg(:id, non_null(:id))
+
+      resolve(&SchedulingResolvers.delete_day_registry/3)
+    end
   end
 
   object :block do

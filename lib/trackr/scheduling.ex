@@ -118,6 +118,59 @@ defmodule Trackr.Scheduling do
     end
   end
 
+  @spec update_day_registry(Ecto.UUID.t(), Ecto.UUID.t(), map()) ::
+          {:ok, DayRegistry.t()} | {:error, Ecto.Changeset.t() | :not_found}
+  def update_day_registry(user_id, day_registry_id, params) do
+    with {:ok, day_registry} <- fetch_day_registry(user_id, day_registry_id),
+         %{valid?: true} = changeset <- DayRegistry.changeset(day_registry, params),
+         {:ok, day_registry} <- Repo.update(changeset) do
+      {:ok, day_registry}
+    else
+      {:error, _reason} = error ->
+        error
+
+      reason ->
+        {:error, reason}
+    end
+  end
+
+  @spec delete_day_registry(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, DayRegistry.t()} | {:error, :not_found}
+  def delete_day_registry(user_id, day_registry_id) do
+    with {:ok, day_registry} <- fetch_day_registry(user_id, day_registry_id),
+         {:ok, day_registry} <- Repo.delete(day_registry) do
+      {:ok, day_registry}
+    end
+  end
+
+  defp fetch_day_registry(user_id, day_registry_id) do
+    DayRegistry
+    |> join(:inner, [day_registry], block in Block,
+      on: day_registry.block_id == block.id,
+      as: :block
+    )
+    |> join(:inner, [day_registry], past_day in PastDay,
+      on: day_registry.past_day_id == past_day.id,
+      as: :past_day
+    )
+    |> where(
+      [day_registry],
+      day_registry.id == ^day_registry_id
+    )
+    |> where(
+      [block: block, past_day: past_day],
+      block.user_id == past_day.user_id and block.user_id == ^user_id
+    )
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:error, :not_found}
+
+      day_schedule ->
+        {:ok, day_schedule}
+    end
+  end
+
   @spec fetch_day_schedules(Ecto.UUID.t()) :: [DaySchedule.t()]
   def fetch_day_schedules(user_id) do
     DaySchedule
