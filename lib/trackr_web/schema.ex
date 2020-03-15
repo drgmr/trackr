@@ -4,13 +4,13 @@ defmodule TrackrWeb.Schema do
   """
   use Absinthe.Schema
 
-  import_types TrackrWeb.Schema.SchedulingTypes
+  import_types(TrackrWeb.Schema.SchedulingTypes)
 
   query do
-    import_fields :scheduling_queries
+    import_fields(:scheduling_queries)
   end
 
   mutation do
-    import_fields :scheduling_mutations
+    import_fields(:scheduling_mutations)
   end
 end

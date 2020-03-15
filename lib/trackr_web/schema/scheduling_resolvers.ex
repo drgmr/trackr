@@ -1,4 +1,7 @@
 defmodule TrackrWeb.Schema.SchedulingResolvers do
+  @moduledoc """
+  Resolves all operations related to Scheduling.
+  """
   alias Trackr.Scheduling
 
   def resolve_blocks(_parent, _args, %{context: %{claims: claims}}) do

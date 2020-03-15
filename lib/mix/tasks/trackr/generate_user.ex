@@ -1,4 +1,9 @@
 defmodule Mix.Tasks.Trackr.GenerateUser do
+  @moduledoc """
+  Generates a new user and prints their auth token.
+
+  The nickname will be based on the current timestamp. Should be used mainly for development.
+  """
   use Mix.Task
 
   alias Trackr.Accounts

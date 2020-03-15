@@ -39,9 +39,10 @@ defmodule Trackr.SchedulingTest do
 
   describe "fetch_blocks/1" do
     test "finds all created blocks", %{user: user} do
-      blocks = Enum.map(0..2, fn _ ->
-        insert(:block, user: user)
-      end)
+      blocks =
+        Enum.map(0..2, fn _ ->
+          insert(:block, user: user)
+        end)
 
       assert result = Scheduling.fetch_blocks(user.id)
 
