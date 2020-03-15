@@ -1,7 +1,6 @@
-defmodule Trackr.Scheduling.Block do
+defmodule Trackr.Scheduling.PlannedDay do
   @moduledoc """
-  Represents a time block - a task that needs to be done,
-  part of the planning process and also the historical registry.
+  Represents a day that has an execution plan.
   """
   use Ecto.Schema
 
@@ -9,14 +8,23 @@ defmodule Trackr.Scheduling.Block do
 
   import Ecto.Changeset
 
-  @required_fields [:name, :description, :category, :user_id]
+  @required_fields [:weekday, :description, :user_id]
   @fields @required_fields
 
+  @weekdays [
+    "sunday",
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday"
+  ]
+
   @primary_key {:id, :binary_id, autogenerate: true}
-  schema "blocks" do
-    field :name, :string
+  schema "planned_days" do
+    field :weekday, :string
     field :description, :string
-    field :category, :string
 
     belongs_to :user, User, type: :binary_id
 
@@ -27,5 +35,6 @@ defmodule Trackr.Scheduling.Block do
     target
     |> cast(changes, @fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:weekday, @weekdays)
   end
 end

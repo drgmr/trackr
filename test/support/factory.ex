@@ -6,7 +6,7 @@ defmodule Trackr.Factory do
     repo: Trackr.Repo
 
   alias Trackr.Accounts.User
-  alias Trackr.Scheduling.Block
+  alias Trackr.Scheduling.{Block, PlannedDay}
 
   def user_factory do
     %User{
@@ -19,6 +19,23 @@ defmodule Trackr.Factory do
       name: sequence(:block, &"Block #{&1}"),
       description: sequence(:block, &"This the test block ##{&1}"),
       category: sequence(:block_category, &"category-#{&1}")
+    }
+  end
+
+  def planned_day_factory do
+    weekdays = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday"
+    ]
+
+    %PlannedDay{
+      weekday: sequence(:weekday, &Enum.at(weekdays, rem(&1, length(weekdays)))),
+      description: sequence(:weekday, &"Description for #{Enum.at(weekdays, &1)}")
     }
   end
 end
