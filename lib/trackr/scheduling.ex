@@ -5,7 +5,7 @@ defmodule Trackr.Scheduling do
   import Ecto.Query
 
   alias Trackr.Repo
-  alias Trackr.Scheduling.{Block, DaySchedule, PlannedDay}
+  alias Trackr.Scheduling.{Block, DaySchedule, PastDay, PlannedDay}
 
   @spec create_block(map()) :: {:ok, Block.t()} | {:error, Ecto.Changeset.t()}
   def create_block(params) do
@@ -81,5 +81,26 @@ defmodule Trackr.Scheduling do
     )
     |> Repo.all()
     |> Repo.preload([:block, :planned_day])
+  end
+
+  @spec create_past_day(map()) :: {:ok, PastDay.t()} | {:error, Ecto.Changeset.t()}
+  def create_past_day(params) do
+    with %{valid?: true} = changeset <- PastDay.changeset(params),
+         {:ok, result} <- Repo.insert(changeset) do
+      {:ok, result}
+    else
+      {:error, _reason} = error ->
+        error
+
+      reason ->
+        {:error, reason}
+    end
+  end
+
+  @spec fetch_past_days(Ecto.UUID.t()) :: [PastDay.t()]
+  def fetch_past_days(user_id) do
+    PastDay
+    |> where([past_day], past_day.user_id == ^user_id)
+    |> Repo.all()
   end
 end
