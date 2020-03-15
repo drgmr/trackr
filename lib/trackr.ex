@@ -7,5 +7,13 @@ defmodule Trackr do
 
   defdelegate get_user(id), to: Accounts
 
+  @spec create_block(%{optional(:__struct__) => none, optional(atom | binary) => any}) ::
+          {:error, Ecto.Changeset.t()} | {:ok, any}
   defdelegate create_block(params), to: Scheduling
+  defdelegate create_planned_day(params), to: Scheduling
+  defdelegate create_day_schedule(params), to: Scheduling
+
+  defdelegate fetch_blocks(user_id), to: Scheduling
+  defdelegate fetch_planned_days(user_id), to: Scheduling
+  defdelegate fetch_day_schedules(user_id), to: Scheduling
 end
