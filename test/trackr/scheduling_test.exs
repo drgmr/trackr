@@ -234,6 +234,77 @@ defmodule Trackr.SchedulingTest do
     end
   end
 
+  describe "update_day_registry/3" do
+    setup :create_block
+    setup :create_past_day
+
+    test "properly updates a day registry", %{user: user, block: block, past_day: past_day} do
+      target_start_time = ~T[03:00:00]
+      params = %{"start_time" => Time.to_iso8601(target_start_time)}
+
+      day_registry =
+        insert(:day_registry, start_time: ~T[12:00:00], block: block, past_day: past_day)
+
+      assert {:ok, new_day_registry} =
+               Scheduling.update_day_registry(user.id, day_registry.id, params)
+
+      assert new_day_registry.id == day_registry.id
+      assert new_day_registry.start_time == target_start_time
+    end
+
+    test "doesn't change day registries not belonging to the user", %{user: target_user} do
+      tentative_start_time = ~T[01:00:00]
+      params = %{"start_time" => Time.to_iso8601(tentative_start_time)}
+
+      other_user = insert(:user)
+      other_block = insert(:block, user: other_user)
+      other_past_day = insert(:past_day, user: other_user)
+
+      other_day_registry = insert(:day_registry, block: other_block, past_day: other_past_day)
+
+      assert {:error, :not_found} =
+               Scheduling.update_day_registry(target_user.id, other_day_registry.id, params)
+    end
+
+    test "fails if day registry doesn't exist", %{user: user} do
+      assert {:error, :not_found} =
+               Scheduling.update_day_registry(user.id, Ecto.UUID.generate(), %{})
+    end
+
+    test "fails if given invalid params" do
+      assert {:error, :not_found} =
+               Scheduling.update_day_registry(Ecto.UUID.generate(), Ecto.UUID.generate(), nil)
+    end
+  end
+
+  describe "delete_day_registry/2" do
+    setup :create_block
+    setup :create_past_day
+
+    test "properly deletes a day registry", %{user: user, block: block, past_day: past_day} do
+      day_registry = insert(:day_registry, block: block, past_day: past_day)
+
+      assert {:ok, _day_registry} = Scheduling.delete_day_registry(user.id, day_registry.id)
+
+      assert Enum.empty?(Scheduling.fetch_day_registries(user.id))
+    end
+
+    test "fails if it doesn't exist", %{user: user} do
+      assert {:error, :not_found} = Scheduling.delete_day_registry(user.id, Ecto.UUID.generate())
+    end
+
+    test "fails if it doesn't belong to the user", %{user: target_user} do
+      other_user = insert(:user)
+      other_block = insert(:block, user: other_user)
+      other_past_day = insert(:past_day, user: other_user)
+
+      other_day_registry = insert(:day_registry, block: other_block, past_day: other_past_day)
+
+      assert {:error, :not_found} =
+               Scheduling.delete_day_registry(target_user.id, other_day_registry.id)
+    end
+  end
+
   describe "fetch_day_schedules/1" do
     setup :create_block
     setup :create_planned_day
