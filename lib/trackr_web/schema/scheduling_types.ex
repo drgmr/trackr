@@ -61,6 +61,24 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
       resolve(&SchedulingResolvers.create_day_schedule/3)
     end
 
+    @desc "Updates a day schedule"
+    field :update_day_schedule, type: :day_schedule do
+      arg(:id, non_null(:id))
+      arg(:start_time, :time)
+      arg(:end_time, :time)
+      arg(:block_id, :id)
+      arg(:planned_day_id, :id)
+
+      resolve(&SchedulingResolvers.update_day_schedule/3)
+    end
+
+    @desc "Deletes a day schedule"
+    field :delete_day_schedule, type: :day_schedule do
+      arg(:id, non_null(:id))
+
+      resolve(&SchedulingResolvers.delete_day_schedule/3)
+    end
+
     @desc "Creates a new past day"
     field :create_past_day, type: :past_day do
       arg(:date, non_null(:date))

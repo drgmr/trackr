@@ -33,6 +33,16 @@ defmodule TrackrWeb.Schema.SchedulingResolvers do
     Trackr.create_day_schedule(params)
   end
 
+  def update_day_schedule(_parent, args, %{context: %{claims: claims}}) do
+    {day_schedule_id, params} = Map.pop!(args, :id)
+
+    Trackr.update_day_schedule(claims["sub"], day_schedule_id, params)
+  end
+
+  def delete_day_schedule(_parent, %{id: day_schedule_id}, %{context: %{claims: claims}}) do
+    Trackr.delete_day_schedule(claims["sub"], day_schedule_id)
+  end
+
   def resolve_past_days(_parent, _args, %{context: %{claims: claims}}) do
     {:ok, Trackr.fetch_past_days(claims["sub"])}
   end
