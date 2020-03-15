@@ -13,9 +13,11 @@ defmodule Trackr do
   defdelegate create_planned_day(params), to: Scheduling
   defdelegate create_day_schedule(params), to: Scheduling
   defdelegate create_past_day(params), to: Scheduling
+  defdelegate create_day_registry(params), to: Scheduling
 
   defdelegate fetch_blocks(user_id), to: Scheduling
   defdelegate fetch_planned_days(user_id), to: Scheduling
   defdelegate fetch_day_schedules(user_id), to: Scheduling
   defdelegate fetch_past_days(user_id), to: Scheduling
+  defdelegate fetch_day_registries(user_id), to: Scheduling
 end
