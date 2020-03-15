@@ -194,8 +194,11 @@ defmodule Trackr.SchedulingTest do
       other_block = insert(:block, user: other_user)
       other_planned_day = insert(:planned_day, user: other_user)
 
-      target_day_schedule = insert(:day_schedule, block: target_block, planned_day: target_planned_day)
-      _other_day_schedule = insert(:day_schedule, block: other_block, planned_day: other_planned_day)
+      target_day_schedule =
+        insert(:day_schedule, block: target_block, planned_day: target_planned_day)
+
+      _other_day_schedule =
+        insert(:day_schedule, block: other_block, planned_day: other_planned_day)
 
       assert [day_schedule] = Scheduling.fetch_day_schedules(target_user.id)
 

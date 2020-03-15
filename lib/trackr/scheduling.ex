@@ -52,8 +52,9 @@ defmodule Trackr.Scheduling do
   @spec create_day_schedule(map()) :: {:ok, DaySchedule.t()} | {:error, Ecto.Changeset.t()}
   def create_day_schedule(params) do
     with %{valid?: true} = changeset <- DaySchedule.changeset(params),
-         {:ok, result} <- Repo.insert(changeset),
-         result = Repo.preload(result, [:block, :planned_day]) do
+         {:ok, result} <- Repo.insert(changeset) do
+      result = Repo.preload(result, [:block, :planned_day])
+
       {:ok, result}
     else
       {:error, _reason} = error ->

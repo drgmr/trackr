@@ -18,7 +18,7 @@ defmodule Trackr.Scheduling.PastDay do
     belongs_to :user, User, type: :binary_id
 
     timestamps()
-end
+  end
 
   def changeset(target \\ %__MODULE__{}, changes) do
     target
