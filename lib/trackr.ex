@@ -17,7 +17,7 @@ defmodule Trackr do
 
   defdelegate update_day_schedule(user_id, day_schedule_id, params), to: Scheduling
 
-  # defdelegate delete_day_schedule, to: Scheduling
+  defdelegate delete_day_schedule(user_id, day_schedule_id), to: Scheduling
 
   defdelegate fetch_blocks(user_id), to: Scheduling
   defdelegate fetch_planned_days(user_id), to: Scheduling

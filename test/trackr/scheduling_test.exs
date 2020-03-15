@@ -172,7 +172,8 @@ defmodule Trackr.SchedulingTest do
       day_schedule =
         insert(:day_schedule, start_time: ~T[12:00:00], block: block, planned_day: planned_day)
 
-      assert {:ok, new_day_schedule} = Scheduling.update_day_schedule(user.id, day_schedule.id, params)
+      assert {:ok, new_day_schedule} =
+               Scheduling.update_day_schedule(user.id, day_schedule.id, params)
 
       assert new_day_schedule.id == day_schedule.id
       assert new_day_schedule.start_time == target_start_time
@@ -186,17 +187,50 @@ defmodule Trackr.SchedulingTest do
       other_block = insert(:block, user: other_user)
       other_planned_day = insert(:planned_day, user: other_user)
 
-      other_day_schedule = insert(:day_schedule, block: other_block, planned_day: other_planned_day)
+      other_day_schedule =
+        insert(:day_schedule, block: other_block, planned_day: other_planned_day)
 
-      assert {:error, :not_found} = Scheduling.update_day_schedule(target_user.id, other_day_schedule.id, params)
+      assert {:error, :not_found} =
+               Scheduling.update_day_schedule(target_user.id, other_day_schedule.id, params)
     end
 
     test "fails if day schedule doesn't exist", %{user: user} do
-      assert {:error, :not_found} = Scheduling.update_day_schedule(user.id, Ecto.UUID.generate(), %{})
+      assert {:error, :not_found} =
+               Scheduling.update_day_schedule(user.id, Ecto.UUID.generate(), %{})
     end
 
     test "fails if given invalid params" do
-      assert {:error, :not_found} = Scheduling.update_day_schedule(Ecto.UUID.generate(), Ecto.UUID.generate(), nil)
+      assert {:error, :not_found} =
+               Scheduling.update_day_schedule(Ecto.UUID.generate(), Ecto.UUID.generate(), nil)
+    end
+  end
+
+  describe "delete_day_schedule/2" do
+    setup :create_block
+    setup :create_planned_day
+
+    test "properly deletes a day schedule", %{user: user, block: block, planned_day: planned_day} do
+      day_schedule = insert(:day_schedule, block: block, planned_day: planned_day)
+
+      assert {:ok, _day_schedule} = Scheduling.delete_day_schedule(user.id, day_schedule.id)
+
+      assert Enum.empty?(Scheduling.fetch_day_schedules(user.id))
+    end
+
+    test "fails if it doesn't exist", %{user: user} do
+      assert {:error, :not_found} = Scheduling.delete_day_schedule(user.id, Ecto.UUID.generate())
+    end
+
+    test "fails if it doesn't belong to the user", %{user: target_user} do
+      other_user = insert(:user)
+      other_block = insert(:block, user: other_user)
+      other_planned_day = insert(:planned_day, user: other_user)
+
+      other_day_schedule =
+        insert(:day_schedule, block: other_block, planned_day: other_planned_day)
+
+      assert {:error, :not_found} =
+               Scheduling.delete_day_schedule(target_user.id, other_day_schedule.id)
     end
   end
 

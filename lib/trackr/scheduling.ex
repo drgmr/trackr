@@ -81,6 +81,15 @@ defmodule Trackr.Scheduling do
     end
   end
 
+  @spec delete_day_schedule(Ecto.UUID.t(), Ecto.UUID.t()) ::
+          {:ok, DaySchedule.t()} | {:error, :not_found}
+  def delete_day_schedule(user_id, day_schedule_id) do
+    with {:ok, day_schedule} <- fetch_day_schedule(user_id, day_schedule_id),
+         {:ok, day_schedule} <- Repo.delete(day_schedule) do
+      {:ok, day_schedule}
+    end
+  end
+
   defp fetch_day_schedule(user_id, day_schedule_id) do
     DaySchedule
     |> join(:inner, [day_schedule], block in Block,
