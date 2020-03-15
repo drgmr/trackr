@@ -16,4 +16,17 @@ defmodule Trackr.Accounts do
         {:ok, user}
     end
   end
+
+  @spec create_user() :: User.t()
+  def create_user do
+    moment =
+      DateTime.utc_now()
+      |> DateTime.to_iso8601()
+
+    params = %{nickname: "user_#{moment}"}
+
+    %User{}
+    |> User.changeset(params)
+    |> Repo.insert!()
+  end
 end

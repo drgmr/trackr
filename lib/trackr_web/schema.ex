@@ -4,15 +4,13 @@ defmodule TrackrWeb.Schema do
   """
   use Absinthe.Schema
 
+  import_types(TrackrWeb.Schema.SchedulingTypes)
+
   query do
-    field :id, :id do
-      resolve(&gen/3)
-    end
+    import_fields(:scheduling_queries)
   end
 
-  defp gen(_, _, _) do
-    id = Ecto.UUID.generate()
-
-    {:ok, id}
+  mutation do
+    import_fields(:scheduling_mutations)
   end
 end
