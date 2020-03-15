@@ -21,6 +21,11 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
     field :day_schedules, list_of(:day_schedule) do
       resolve(&SchedulingResolvers.resolve_day_schedules/3)
     end
+
+    @desc "Lists all past days belonging to the current user"
+    field :past_days, list_of(:past_day) do
+      resolve(&SchedulingResolvers.resolve_past_days/3)
+    end
   end
 
   object :scheduling_mutations do
@@ -43,12 +48,19 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
 
     @desc "Creates a new day schedule"
     field :create_day_schedule, type: :day_schedule do
-      arg(:start_time, :time)
-      arg(:end_time, :time)
-      arg(:block_id, :id)
-      arg(:planned_day_id, :id)
+      arg(:start_time, non_null(:time))
+      arg(:end_time, non_null(:time))
+      arg(:block_id, non_null(:id))
+      arg(:planned_day_id, non_null(:id))
 
       resolve(&SchedulingResolvers.create_day_schedule/3)
+    end
+
+    @desc "Creates a new past day"
+    field :create_past_day, type: :past_day do
+      arg(:date, non_null(:date))
+
+      resolve(&SchedulingResolvers.create_past_day/3)
     end
   end
 
@@ -67,10 +79,15 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
 
   object :day_schedule do
     field :id, :id
-    field :start_time, :time
-    field :end_time, :time
+    field :start_time, non_null(:time)
+    field :end_time, non_null(:time)
 
-    field :block, :block
-    field :planned_day, :planned_day
+    field :block, non_null(:block)
+    field :planned_day, non_null(:planned_day)
+  end
+
+  object :past_day do
+    field :id, non_null(:id)
+    field :date, non_null(:date)
   end
 end

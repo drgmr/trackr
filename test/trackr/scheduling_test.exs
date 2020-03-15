@@ -194,8 +194,11 @@ defmodule Trackr.SchedulingTest do
       other_block = insert(:block, user: other_user)
       other_planned_day = insert(:planned_day, user: other_user)
 
-      target_day_schedule = insert(:day_schedule, block: target_block, planned_day: target_planned_day)
-      _other_day_schedule = insert(:day_schedule, block: other_block, planned_day: other_planned_day)
+      target_day_schedule =
+        insert(:day_schedule, block: target_block, planned_day: target_planned_day)
+
+      _other_day_schedule =
+        insert(:day_schedule, block: other_block, planned_day: other_planned_day)
 
       assert [day_schedule] = Scheduling.fetch_day_schedules(target_user.id)
 
@@ -204,6 +207,62 @@ defmodule Trackr.SchedulingTest do
 
     test "doesn't fail if there are no day schedules", %{user: user} do
       assert [] = Scheduling.fetch_day_schedules(user.id)
+    end
+  end
+
+  describe "create_past_day/1" do
+    test "successfully creates a new past day", %{user: user} do
+      params =
+        :past_day
+        |> params_for()
+        |> Map.put(:user_id, user.id)
+
+      assert {:ok, past_day} = Scheduling.create_past_day(params)
+
+      assert past_day.date == params.date
+    end
+
+    test "fails when given invalid data" do
+      params = %{}
+
+      assert {:error, changeset} = Scheduling.create_past_day(params)
+
+      assert errors_on(changeset) == %{
+               date: ["can't be blank"],
+               user_id: ["can't be blank"]
+             }
+    end
+  end
+
+  describe "fetch_past_days/1" do
+    test "finds all created past days", %{user: user} do
+      past_days =
+        Enum.map(0..2, fn _ ->
+          insert(:past_day, user: user)
+        end)
+
+      assert result = Scheduling.fetch_past_days(user.id)
+
+      ids = Enum.map(result, &Map.get(&1, :id))
+
+      for past_day <- past_days do
+        assert past_day.id in ids
+      end
+    end
+
+    test "ignores past days not belonging to the user", %{user: target_user} do
+      other_user = insert(:user)
+
+      target_past_day = insert(:past_day, user: target_user)
+      _other_past_day = insert(:past_day, user: other_user)
+
+      assert [past_day] = Scheduling.fetch_past_days(target_user.id)
+
+      assert past_day.id == target_past_day.id
+    end
+
+    test "doesn't fail if there are no past days", %{user: user} do
+      assert [] = Scheduling.fetch_past_days(user.id)
     end
   end
 end
