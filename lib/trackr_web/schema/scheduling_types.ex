@@ -16,6 +16,11 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
     field :planned_days, list_of(:planned_day) do
       resolve(&SchedulingResolvers.resolve_planned_days/3)
     end
+
+    @desc "Lists all day schedules"
+    field :day_schedules, list_of(:day_schedule) do
+      resolve(&SchedulingResolvers.resolve_day_schedules/3)
+    end
   end
 
   object :scheduling_mutations do
@@ -35,6 +40,16 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
 
       resolve(&SchedulingResolvers.create_planned_day/3)
     end
+
+    @desc "Creates a new day schedule"
+    field :create_day_schedule, type: :day_schedule do
+      arg(:start_time, :time)
+      arg(:end_time, :time)
+      arg(:block_id, :id)
+      arg(:planned_day_id, :id)
+
+      resolve(&SchedulingResolvers.create_day_schedule/3)
+    end
   end
 
   object :block do
@@ -48,5 +63,14 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
     field :id, :id
     field :weekday, non_null(:string)
     field :description, non_null(:string)
+  end
+
+  object :day_schedule do
+    field :id, :id
+    field :start_time, :time
+    field :end_time, :time
+
+    field :block, :block
+    field :planned_day, :planned_day
   end
 end

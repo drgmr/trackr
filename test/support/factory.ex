@@ -6,7 +6,7 @@ defmodule Trackr.Factory do
     repo: Trackr.Repo
 
   alias Trackr.Accounts.User
-  alias Trackr.Scheduling.{Block, PlannedDay}
+  alias Trackr.Scheduling.{Block, DaySchedule, PlannedDay}
 
   def user_factory do
     %User{
@@ -36,6 +36,22 @@ defmodule Trackr.Factory do
     %PlannedDay{
       weekday: sequence(:weekday, &Enum.at(weekdays, rem(&1, length(weekdays)))),
       description: sequence(:weekday, &"Description for #{Enum.at(weekdays, &1)}")
+    }
+  end
+
+  def day_schedule_factory do
+    start_time =
+      Time.utc_now()
+      |> Time.truncate(:second)
+
+    end_time =
+      start_time
+      |> Time.add(3000, :second)
+      |> Time.truncate(:second)
+
+    %DaySchedule{
+      start_time: start_time,
+      end_time: end_time
     }
   end
 end
