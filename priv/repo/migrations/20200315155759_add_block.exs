@@ -9,6 +9,8 @@ defmodule Trackr.Repo.Migrations.AddBlock do
       add :category, :string, null: false
 
       add :user_id, references(:users, type: :binary_id)
+
+      timestamps()
     end
   end
 end

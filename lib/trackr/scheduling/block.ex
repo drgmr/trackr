@@ -19,6 +19,8 @@ defmodule Trackr.Scheduling.Block do
     field :category, :string
 
     belongs_to :user, User, type: :binary_id
+
+    timestamps()
   end
 
   def changeset(target \\ %__MODULE__{}, changes) do
