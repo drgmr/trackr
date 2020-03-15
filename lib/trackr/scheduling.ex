@@ -2,8 +2,9 @@ defmodule Trackr.Scheduling do
   @moduledoc """
   Provides actions over scheduling resources.
   """
-  alias Trackr.Repo
+  import Ecto.Query
 
+  alias Trackr.Repo
   alias Trackr.Scheduling.Block
 
   @spec create_block(map()) :: {:ok, Block.t()} | {:error, Ecto.Changeset.t()}
@@ -18,5 +19,12 @@ defmodule Trackr.Scheduling do
       reason ->
         {:error, reason}
     end
+  end
+
+  @spec fetch_blocks(Ecto.UUID.t()) :: [Block.t()]
+  def fetch_blocks(user_id) do
+    Block
+    |> where([block], block.user_id == ^user_id)
+    |> Repo.all()
   end
 end
