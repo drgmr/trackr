@@ -127,15 +127,9 @@ defmodule Trackr.SchedulingTest do
     end
   end
 
-  defp create_block_and_planned_day(%{user: user}) do
-    block = insert(:block, user: user)
-    planned_day = insert(:planned_day, user: user)
-
-    {:ok, block: block, planned_day: planned_day}
-  end
-
   describe "create_day_schedule/1" do
-    setup :create_block_and_planned_day
+    setup :create_block
+    setup :create_planned_day
 
     test "successfully creates a new day schedule", %{
       block: block,
@@ -168,10 +162,11 @@ defmodule Trackr.SchedulingTest do
   end
 
   describe "fetch_day_schedules/1" do
-    setup :create_block_and_planned_day
+    setup :create_block
+    setup :create_planned_day
 
     test "finds all created day schedules", %{user: user, block: block, planned_day: planned_day} do
-      planned_days =
+      day_schedules =
         Enum.map(0..2, fn _ ->
           insert(:day_schedule, block: block, planned_day: planned_day)
         end)
@@ -180,8 +175,8 @@ defmodule Trackr.SchedulingTest do
 
       ids = Enum.map(result, &Map.get(&1, :id))
 
-      for planned_day <- planned_days do
-        assert planned_day.id in ids
+      for day_schedule <- day_schedules do
+        assert day_schedule.id in ids
       end
     end
 
@@ -263,6 +258,91 @@ defmodule Trackr.SchedulingTest do
 
     test "doesn't fail if there are no past days", %{user: user} do
       assert [] = Scheduling.fetch_past_days(user.id)
+    end
+  end
+
+  describe "create_day_registry/1" do
+    setup :create_block
+    setup :create_past_day
+
+    test "successfully creates a new day registry", %{
+      block: block,
+      past_day: past_day
+    } do
+      params =
+        :day_registry
+        |> params_for()
+        |> Map.put(:block_id, block.id)
+        |> Map.put(:past_day_id, past_day.id)
+
+      assert {:ok, day_registry} = Scheduling.create_day_registry(params)
+
+      assert day_registry.start_time == params.start_time
+      assert day_registry.end_time == params.end_time
+    end
+
+    test "fails when given invalid data" do
+      params = %{}
+
+      assert {:error, changeset} = Scheduling.create_day_registry(params)
+
+      assert errors_on(changeset) == %{
+               start_time: ["can't be blank"],
+               end_time: ["can't be blank"],
+               notes: ["can't be blank"],
+               block_id: ["can't be blank"],
+               past_day_id: ["can't be blank"]
+             }
+    end
+  end
+
+  describe "fetch_day_registries/1" do
+    setup :create_block
+    setup :create_past_day
+
+    test "finds all created day registries", %{user: user, block: block, past_day: past_day} do
+      day_registries =
+        Enum.map(0..2, fn _ ->
+          insert(:day_registry, block: block, past_day: past_day)
+        end)
+
+      assert result = Scheduling.fetch_day_registries(user.id)
+
+      ids = Enum.map(result, &Map.get(&1, :id))
+
+      for day_registry <- day_registries do
+        assert day_registry.id in ids
+      end
+    end
+
+    test "ignores day registries not belonging to the user", %{
+      user: target_user,
+      block: target_block,
+      past_day: target_past_day
+    } do
+      other_user = insert(:user)
+      other_block = insert(:block, user: other_user)
+      other_past_day = insert(:past_day, user: other_user)
+
+      target_day_registry = insert(:day_registry, block: target_block, past_day: target_past_day)
+
+      _other_day_registry = insert(:day_registry, block: other_block, past_day: other_past_day)
+
+      assert [day_registry] = Scheduling.fetch_day_registries(target_user.id)
+
+      assert day_registry.id == target_day_registry.id
+    end
+
+    test "doesn't fail if there are no day registries", %{user: user} do
+      assert [] = Scheduling.fetch_day_registries(user.id)
+    end
+  end
+
+  for item <- [:block, :past_day, :planned_day] do
+    defp unquote(:"create_#{item}")(%{user: user}) do
+      subject = insert(unquote(item), user: user)
+
+      {:ok, [{unquote(item), subject}]}
     end
   end
 end

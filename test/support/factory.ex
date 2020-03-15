@@ -6,7 +6,7 @@ defmodule Trackr.Factory do
     repo: Trackr.Repo
 
   alias Trackr.Accounts.User
-  alias Trackr.Scheduling.{Block, DaySchedule, PastDay, PlannedDay}
+  alias Trackr.Scheduling.{Block, DayRegistry, DaySchedule, PastDay, PlannedDay}
 
   def user_factory do
     %User{
@@ -58,6 +58,23 @@ defmodule Trackr.Factory do
   def past_day_factory do
     %PastDay{
       date: Date.utc_today()
+    }
+  end
+
+  def day_registry_factory do
+    start_time =
+      Time.utc_now()
+      |> Time.truncate(:second)
+
+    end_time =
+      start_time
+      |> Time.add(3000, :second)
+      |> Time.truncate(:second)
+
+    %DayRegistry{
+      start_time: start_time,
+      end_time: end_time,
+      notes: sequence(:day_registry, &"Notes about Day Registry ##{&1}")
     }
   end
 end

@@ -26,6 +26,11 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
     field :past_days, list_of(:past_day) do
       resolve(&SchedulingResolvers.resolve_past_days/3)
     end
+
+    @desc "Lists all day registries"
+    field :day_registries, list_of(:day_registry) do
+      resolve(&SchedulingResolvers.resolve_day_registries/3)
+    end
   end
 
   object :scheduling_mutations do
@@ -62,6 +67,17 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
 
       resolve(&SchedulingResolvers.create_past_day/3)
     end
+
+    @desc "Creates a new day registry"
+    field :create_day_registry, type: :day_registry do
+      arg(:start_time, non_null(:time))
+      arg(:end_time, non_null(:time))
+      arg(:notes, non_null(:string))
+      arg(:block_id, non_null(:id))
+      arg(:past_day_id, non_null(:id))
+
+      resolve(&SchedulingResolvers.create_day_registry/3)
+    end
   end
 
   object :block do
@@ -89,5 +105,15 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
   object :past_day do
     field :id, non_null(:id)
     field :date, non_null(:date)
+  end
+
+  object :day_registry do
+    field :id, :id
+    field :start_time, non_null(:time)
+    field :end_time, non_null(:time)
+    field :notes, non_null(:string)
+
+    field :block, non_null(:block)
+    field :past_day, non_null(:past_day)
   end
 end
