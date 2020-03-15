@@ -9,4 +9,8 @@ defmodule TrackrWeb.Schema do
   query do
     import_fields :scheduling_queries
   end
+
+  mutation do
+    import_fields :scheduling_mutations
+  end
 end

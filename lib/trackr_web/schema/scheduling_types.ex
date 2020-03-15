@@ -10,6 +10,17 @@ defmodule TrackrWeb.Schema.SchedulingTypes do
     end
   end
 
+  object :scheduling_mutations do
+    @desc "Creates a new block"
+    field :create_block, type: :block do
+      arg :name, non_null(:string)
+      arg :description, non_null(:string)
+      arg :category, non_null(:string)
+
+      resolve &SchedulingResolvers.create_block/3
+    end
+  end
+
   object :block do
     field :id, :id
     field :name, non_null(:string)
