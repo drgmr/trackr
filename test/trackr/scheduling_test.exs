@@ -324,11 +324,9 @@ defmodule Trackr.SchedulingTest do
       other_block = insert(:block, user: other_user)
       other_past_day = insert(:past_day, user: other_user)
 
-      target_day_registry =
-        insert(:day_registry, block: target_block, past_day: target_past_day)
+      target_day_registry = insert(:day_registry, block: target_block, past_day: target_past_day)
 
-      _other_day_registry =
-        insert(:day_registry, block: other_block, past_day: other_past_day)
+      _other_day_registry = insert(:day_registry, block: other_block, past_day: other_past_day)
 
       assert [day_registry] = Scheduling.fetch_day_registries(target_user.id)
 

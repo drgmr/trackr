@@ -42,4 +42,14 @@ defmodule TrackrWeb.Schema.SchedulingResolvers do
 
     Trackr.create_past_day(params)
   end
+
+  def resolve_day_registries(_parent, _args, %{context: %{claims: claims}}) do
+    {:ok, Trackr.fetch_day_registries(claims["sub"])}
+  end
+
+  def create_day_registry(_parent, args, %{context: %{claims: claims}}) do
+    params = Map.put(args, :user_id, claims["sub"])
+
+    Trackr.create_day_registry(params)
+  end
 end

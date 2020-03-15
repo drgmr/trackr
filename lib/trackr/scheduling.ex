@@ -5,7 +5,7 @@ defmodule Trackr.Scheduling do
   import Ecto.Query
 
   alias Trackr.Repo
-  alias Trackr.Scheduling.{Block, DaySchedule, DayRegistry, PastDay, PlannedDay}
+  alias Trackr.Scheduling.{Block, DayRegistry, DaySchedule, PastDay, PlannedDay}
 
   @spec create_block(map()) :: {:ok, Block.t()} | {:error, Ecto.Changeset.t()}
   def create_block(params) do

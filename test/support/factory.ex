@@ -6,7 +6,7 @@ defmodule Trackr.Factory do
     repo: Trackr.Repo
 
   alias Trackr.Accounts.User
-  alias Trackr.Scheduling.{Block, DaySchedule, DayRegistry, PastDay, PlannedDay}
+  alias Trackr.Scheduling.{Block, DayRegistry, DaySchedule, PastDay, PlannedDay}
 
   def user_factory do
     %User{
